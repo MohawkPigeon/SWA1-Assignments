@@ -1,0 +1,145 @@
+<html>
+
+<head>
+    <title>Weather Data</title>
+    <style>
+        td {
+            width: 40px;
+            height: 40px;
+            border: 1px solid black;
+        }
+
+        table {
+            border: 1px solid black;
+            border-spacing: 0;
+        }
+
+        th {
+            font-weight: bold;
+        }
+    </style>
+    <script src="model.js"></script>
+    <script src="viewFetch.js"></script>
+    <script>
+
+
+        const init = function () {
+
+            const theView = view(window)
+            Promise.all([fetch('http://localhost:8080/data'), fetch('http://localhost:8080/forecast')])
+                .then(res => res.map(r => r.json()))
+                .then(r => Promise.all(r))
+                .then(([data, forecast]) => {
+                    theModel = model(data, forecast)
+                    theView.update(theModel)
+                })
+                .catch(e => theView.displayError(e))
+        }
+
+    </script>
+</head>
+
+<body onload=init()>
+    <div id='base'>
+        <h1>Latest measurement for each kind</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Unit</th>
+                    <th>Time</th>
+                    <th>Place</th>
+                    <th>Precipitation type/Direction</th>
+                </tr>
+            </thead>
+            <tbody id='showMeasurementData'></tbody>
+        </table>
+        <p id='error messages'>
+    </div>
+
+    <div id='base1'>
+        <h1>Minimum temperature for the last 5 days</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Unit</th>
+                    <th>Time</th>
+                    <th>Place</th>
+                </tr>
+            </thead>
+            <tbody id='showMinData'></tbody>
+        </table>
+
+    </div>
+
+    <div id='base2'>
+        <h1>Maximum temperature for the last 5 day</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Unit</th>
+                    <th>Time</th>
+                    <th>Place</th>
+                </tr>
+            </thead>
+            <tbody id='showMaxData'></tbody>
+        </table>
+
+    </div>
+
+    <div id='base3'>
+        <h1>Total precipitation for the last 5 days</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Value</th>
+                    <th>Place</th>
+                </tr>
+            </thead>
+            <tbody id='showTotalData'></tbody>
+        </table>
+
+
+    </div>
+
+    <div id='base4'>
+        <h1>Average wind speed for the last 5 days</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Value</th>
+                    <th>Place</th>
+                </tr>
+            </thead>
+            <tbody id='showAvgData'></tbody>
+        </table>
+
+
+    </div>
+
+    <div id='base5'>
+        <h1>Hourly predictions for the next 24 hours.</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Unit</th>
+                    <th>Time</th>
+                    <th>Place</th>
+                    <th>Precipitation type/Direction</th>
+                </tr>
+            </thead>
+            <tbody id='showPredictData'></tbody>
+        </table>
+
+
+    </div>
+</body>
+
+</html>

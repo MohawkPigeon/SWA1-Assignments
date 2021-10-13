@@ -1,0 +1,138 @@
+<html>
+
+<head>
+    <title>Weather</title>
+    <style>
+        td {
+            width: 40px;
+            height: 40px;
+            border: 1px solid black;
+        }
+
+        table {
+            border: 1px solid black;
+            border-spacing: 0;
+        }
+    </style>
+    <script src="model.js"></script>
+    <script src="view.js"></script>
+    <script>
+
+        const init = function () {
+            const theView = view(window)
+            const request = new XMLHttpRequest()
+            request.open('GET', 'http://localhost:8080/data')
+            request.send()
+            request.onerror = () => view.displayError
+            request.onload = () => {
+                if (request.status != 200) view.displayError(request.responseText)
+                const weather = JSON.parse(request.responseText)
+                request.open('GET', 'http://localhost:8080/forecast')
+                request.send()
+                request.onerror = () => view.displayError
+                request.onload = () => {
+                    const forecast = JSON.parse(request.responseText)
+                    const theModel = model(weather, forecast)
+                    theView.update(theModel)
+                }
+            }
+        }
+    </script>
+</head>
+
+<body onload=init()>
+    <div id='base'>
+        <h1>Latest measurement for each kind</h1>
+        <table>
+            <thead>
+                <tr>
+                    <td>Value</td>
+                    <td>Type</td>
+                    <td>Unit</td>
+                    <td>Time</td>
+                    <td>Place</td>
+                    <td>Precipitation type/Direction</td>
+                </tr>
+            </thead>
+            <tbody id='showMeasurementData'></tbody>
+        </table>
+        <p id='error message'>
+    </div>
+    <div id='base1'>
+        <h1>Minimum temperature for the last 5 days</h1>
+        <table>
+            <thead>
+                <tr>
+                    <td>Value</td>
+                    <td>Type</td>
+                    <td>Unit</td>
+                    <td>Time</td>
+                    <td>Place</td>
+                </tr>
+            </thead>
+            <tbody id='showMinData'></tbody>
+        </table>
+    </div>
+    <div id='base2'>
+        <h1>Maximum temperature for the last 5 days</h1>
+        <table>
+            <thead>
+                <tr>
+                    <td>Value</td>
+                    <td>Type</td>
+                    <td>Unit</td>
+                    <td>Time</td>
+                    <td>Place</td>
+                </tr>
+            </thead>
+            <tbody id='showMaxData'></tbody>
+        </table>
+    </div>
+    <div id='base3'>
+        <h1>Total precipitation for the last 5 days</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Value</th>
+                    <th>Place</th>
+                </tr>
+            </thead>
+            <tbody id='showTotalData'></tbody>
+        </table>
+    </div>
+    <div id='base4'>
+        <h1>Average wind speed for the last 5 days</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Value</th>
+                    <th>Place</th>
+                </tr>
+            </thead>
+            <tbody id='showAvgData'></tbody>
+        </table>
+
+
+    </div>
+
+    <div id='base5'>
+        <h1>Hourly predictions for the next 24 hours.</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Unit</th>
+                    <th>Time</th>
+                    <th>Place</th>
+                    <th>Precipitation type/Direction</th>
+                </tr>
+            </thead>
+            <tbody id='showPredictData'></tbody>
+        </table>
+
+
+    </div>
+</body>
+
+</html>
