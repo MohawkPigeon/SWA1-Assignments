@@ -1,6 +1,7 @@
 import { WeatherData } from "./WeatherData.mjs"
 
-class WeatherHistory extends WeatherData  {
+class WeatherHistory  {
+
 constructor(data = []){
     this.data = data
     Object.freeze(this)
@@ -20,7 +21,7 @@ forType(type){
 }
 
 forPeriod(dateFrom, dateTo){
-    const periods = data => data.filter(WeatherData => WeatherData.time() >= dateFrom).filter(WeatherData => WeatherData.time() <= dateTo)
+    const periods = data => data.filter(WeatherData => WeatherData.getTime() >= dateFrom).filter(WeatherData => WeatherData.getTime() <= dateTo)
 
     return new WeatherHistory(periods)
 }
@@ -32,32 +33,26 @@ including(newdata){
 }
 
 convertToUsUnit(){
-    let newValue = this.getValue()
-    let newUnit = "in"
-    if(this.unit === "mm") {
-        newValue = newValue * 0.039370
-    }
+    const newValue = data => data.filter(WeatherData => WeatherData.getType() === 'mm')
+    .map(WeatherData => WeatherData.getValue() * 0.039370)
+    .map(WeatherData => WeatherData.getType() = "in")
 
-    return new WeatherHistory(newValue, newUnit)
+    return new WeatherHistory(newValue)
 }
 
 convertToInternationalUnits(){
-    let newValue = this.getValue()
-    let newUnit = "mm"
-    if(this.unit === "in") {
-        newValue = newValue * 25.4
-    }
+    const newValue = data => data.filter(WeatherData => WeatherData.getType() === 'in')
+    .map(WeatherData => WeatherData.getValue() * 25.4)
+    .map(WeatherData => WeatherData.getType() = "mm")
 
-    return new WeatherHistory(newValue, newUnit)
+    return new WeatherHistory(newValue)
 }
 
-lowestValue(){       
-    const lowestValue = () => data
-    .filter(WeatherData => WeatherData.getValue())
-    .sort((a, b) => (a.value > b.value) ? 1 : -1)
-    .slice(0, 1)
+lowestValue(){   
+    const min = data => data.filter(WeatherData => WeatherData.getValue() != null)
+    .reduce((a, b) => Math.min(a, b))
     
-    return lowestValue
+    return min
 }
 
 getData(){

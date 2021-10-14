@@ -20,7 +20,7 @@ class WeatherForecast  {
     }
 
     forPeriod(dateFrom, dateTo){
-        const periods = data => data.filter(WeatherPrediction => WeatherPrediction.time() >= dateFrom).filter(WeatherPrediction => WeatherPrediction.time() <= dateTo)
+        const periods = data => data.filter(WeatherPrediction => WeatherPrediction.getTime() >= dateFrom).filter(WeatherPrediction => WeatherPrediction.getTime() <= dateTo)
 
         return new WeatherForecast(periods)
     }
@@ -32,31 +32,23 @@ class WeatherForecast  {
     }
 
     convertToUsUnit(){
-        let newMinValue = this.getMin()
-        let newMaxValue = this.getMax()
-        let newUnit = "in"
-        if(this.unit === "mm") {
-            newMinValue = newMinValue * 0.039370
-            newMaxValue = newMaxValue * 0.039370
-        }
-
-        return new WeatherForecast(newMinValue, newMinValue, newUnit)
+        const newValue = data => data.filter(WeatherPrediction => WeatherPrediction.getType() === 'mm')
+        .map(WeatherPrediction => WeatherPrediction.getValue() * 0.039370)
+        .map(WeatherPrediction => WeatherPrediction.getType() = "in")
+    
+        return new WeatherForecast(newValue)
     }
 
     convertToInternationalUnits(){
-        let newMinValue = this.getMin()
-        let newMaxValue = this.getMax()
-        let newUnit = "mm"
-        if(this.unit === "in") {
-            newMinValue = newMinValue * 25.4
-            newMaxValue = newMaxValue * 25.4
-        }
-
-        return new WeatherForecast(newMinValue, newMinValue, newUnit)
+        const newValue = data => data.filter(WeatherPrediction => WeatherPrediction.getType() === 'in')
+        .map(WeatherPrediction => WeatherPrediction.getValue() * 25.4)
+        .map(WeatherPrediction => WeatherPrediction.getType() = "mm")
+    
+        return new WeatherForecast(newValue)
     }
 
     getAverageMinValue(){        
-        const avgMinValue = () => [data.filter(WeatherPrediction => WeatherPrediction.getMin())
+        const avgMinValue = () => [data.filter(WeatherPrediction => WeatherPrediction.getMin() != null)
             .reduce((s, n) => ({
                 value: s.value + n.value /
                     data.filter(WeatherPrediction => WeatherPrediction.getMin()).length
@@ -66,7 +58,7 @@ class WeatherForecast  {
     }
 
     getAverageMaxValue(){
-        const avgMaxValue = () => [data.filter(WeatherPrediction => WeatherPrediction.getMax())
+        const avgMaxValue = () => [data.filter(WeatherPrediction => WeatherPrediction.getMax() != null)
             .reduce((s, n) => ({
                 value: s.value + n.value /
                     data.filter(WeatherPrediction => WeatherPrediction.getMax()).length
